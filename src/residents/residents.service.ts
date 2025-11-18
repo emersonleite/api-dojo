@@ -17,6 +17,8 @@ export class ResidentsService {
     private readonly residentRepository: Repository<Resident>
   ) {}
 
+  // relations: ["notices"] faz o carregamento eager (ansioso) dos avisos relacionados a cada morador,
+  // evitando o problema N+1 queries e incluindo os dados completos na resposta de uma vez
   async findAll(): Promise<Resident[]> {
     return await this.residentRepository.find({ relations: ["notices"] });
   }
@@ -27,6 +29,7 @@ export class ResidentsService {
       relations: ["notices"],
     });
     if (!resident) {
+      // Lança NotFoundException se o morador não for encontrado
       throw new NotFoundException(`Resident with ID ${id} not found.`);
     }
     return resident;
@@ -38,6 +41,7 @@ export class ResidentsService {
     });
 
     if (isThereUserEmail) {
+      // Lança ConflictException para indicar conflito de dados (email duplicado)
       throw new ConflictException(
         `Resident with email ${residentDto.email} already exists.`
       );
@@ -62,6 +66,7 @@ export class ResidentsService {
     } catch (error) {
       /* Captura o erro, e compara o código para retorno */
       if (error.driverError.errno === 19) {
+        // Lança ConflictException se o erro for de unicidade (email duplicado)
         throw new ConflictException(
           `Resident with email ${residentDto.email} already exists.`
         );
@@ -73,6 +78,7 @@ export class ResidentsService {
   async update(id: string, updateResidentDto: UpdateResidentDto) {
     /* Evitando que o email possa ser atualizado mesmo que esteja presente no DTO */
     if ("email" in updateResidentDto) {
+      // Lança BadRequestException para impedir atualização do email
       throw new BadRequestException("Email cannot be updated");
     }
 
@@ -91,6 +97,7 @@ export class ResidentsService {
   async delete(id: string): Promise<Resident> {
     const resident = await this.residentRepository.findOneBy({ id });
     if (!resident) {
+      // Lança NotFoundException se o morador não for encontrado para exclusão
       throw new NotFoundException(`Resident with ID ${id} not found.`);
     }
     await this.residentRepository.remove(resident);

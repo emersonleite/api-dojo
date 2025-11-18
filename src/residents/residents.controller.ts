@@ -8,56 +8,67 @@ import {
   Delete,
   HttpCode,
   Query,
-  ParseUUIDPipe,
+  ParseUUIDPipe, // Pipe do NestJS que valida se o parâmetro é um UUID válido; lança BadRequestException se inválido
 } from "@nestjs/common";
 import { ResidentsService } from "./residents.service";
 import { CreateResidentDto } from "./dto/create-resident.dto";
 import { UpdateResidentDto } from "./dto/update-resident.dto";
 
+/*
+ * Exemplos de pipes do NestJS que podem ser usados em parâmetros ou corpo de requisições:
+ * - ParseIntPipe: Converte string para número inteiro (ex.: @Param('id', ParseIntPipe) id: number)
+ * - ParseFloatPipe: Converte string para número flutuante (ex.: @Param('price', ParseFloatPipe) price: number)
+ * - ParseBoolPipe: Converte string para booleano (ex.: @Query('active', ParseBoolPipe) active: boolean)
+ * - ParseUUIDPipe: Valida e converte para UUID (ex.: @Param('id', ParseUUIDPipe) id: string)
+ * - ValidationPipe: Valida DTOs com regras definidas (usado globalmente em main.ts)
+ * - DefaultValuePipe: Define valor padrão se parâmetro estiver ausente (ex.: @Query('limit', new DefaultValuePipe(10)) limit: number)
+ */
+
 /**
  * O controlador (ResidentsController) gerencia as rotas HTTP
  * relacionadas aos moradores e delega a lógica para o serviço (ResidentsService).
  */
-@Controller("residents") // Define a rota principal como "/residents"
+@Controller("residents")
 export class ResidentsController {
   constructor(private readonly residentsService: ResidentsService) {}
 
   /**
-   * Rota GET para listar todos os moradores.
-   * Exemplo: GET /residents
-   * Pode aceitar parâmetros de consulta (query parameters) para filtros.
+   * Lista todos os moradores.
+   * @param filter - Parâmetro opcional para filtrar os resultados.
+   * @returns Lista de moradores.
    */
-  @Get() // Mapeia requisições GET para este método
+  @Get()
   findAll(@Query("filter") filter?: string) {
-    // Query parameters podem ser usados para filtrar dados
     return this.residentsService.findAll();
   }
 
   /**
-   * Rota GET para buscar um morador pelo ID.
-   * Exemplo: GET /residents/1
-   * Utiliza o decorador @Param para capturar parâmetros de rota.
+   * Busca um morador pelo ID.
+   * @param id - ID do morador (UUID).
+   * @returns O morador encontrado ou erro se não existir.
    */
-  @Get(":id") // Mapeia requisições GET com um parâmetro de rota
+  @Get(":id")
   findOne(@Param("id") id: string) {
-    return this.residentsService.findOne(id); // Conversão automática do parâmetro para número
+    return this.residentsService.findOne(id);
   }
 
   /**
-   * Rota POST para criar um novo morador.
-   * Exemplo: POST /residents
-   * Aceita dados no corpo da requisição via @Body.
+   * Cria um novo morador.
+   * @param residentDto - Dados do morador a ser criado.
+   * @returns O morador criado.
    */
-  @Post() // Mapeia requisições POST para este método
+  @Post()
   create(@Body() residentDto: CreateResidentDto) {
     return this.residentsService.create_alternative(residentDto);
   }
 
   /**
-   * Rota PATCH para atualizar parcialmente um morador.
-   * Exemplo: PATCH /residents/1
+   * Atualiza parcialmente um morador.
+   * @param id - ID do morador (UUID), validado pelo ParseUUIDPipe para garantir que seja um UUID válido.
+   * @param updateResidentDto - Dados para atualização.
+   * @returns O morador atualizado.
    */
-  @Patch(":id") // Mapeia requisições PATCH para este método
+  @Patch(":id")
   update(
     @Param("id", ParseUUIDPipe) id: string,
     @Body() updateResidentDto: UpdateResidentDto
@@ -66,16 +77,20 @@ export class ResidentsController {
   }
 
   /**
-   * Rota DELETE para remover um morador.
-   * Exemplo: DELETE /residents/1
-   * Define um código de resposta personalizado com @HttpCode.
+   * Remove um morador pelo ID.
+   * @param id - ID do morador.
+   * @returns Confirmação de remoção (status 204).
    */
-  @Delete(":id") // Mapeia requisições DELETE para este método
-  @HttpCode(204) // Responde com o código HTTP 204 (No Content)
+  @Delete(":id")
+  @HttpCode(204)
   async remove(@Param("id") id: string) {
     return await this.residentsService.delete(id);
   }
 
+  /**
+   * Remove todos os moradores. Use com cautela, pois é irreversível.
+   * @returns Confirmação de remoção.
+   */
   @Delete()
   async removeAll() {
     return await this.residentsService.deleteAll();

@@ -1,28 +1,28 @@
-import { Module } from '@nestjs/common';
-import { ResidentsModule } from '../residents/residents.module';
-import { NoticesModule } from '../notices/notices.module';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { ClassSerializerInterceptor } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Module } from "@nestjs/common";
+import { ResidentsModule } from "../residents/residents.module";
+import { NoticesModule } from "../notices/notices.module";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { APP_INTERCEPTOR } from "@nestjs/core";
+import { ClassSerializerInterceptor } from "@nestjs/common";
+import { AppService } from "./app.service";
 
 /**
  * O módulo principal da aplicação (AppModule).
- * Aqui importamos o módulo de moradores (ResidentsModule),
- * conectando todos os recursos relacionados a moradores com o aplicativo principal.
+ * Aqui importamos os módulos de moradores (ResidentsModule) e avisos (NoticesModule),
+ *  * conectando todos os recursos relacionados com o aplicativo principal.
  */
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: 'database/db.sqlite',
+      type: "sqlite",
+      database: "database/db.sqlite",
       autoLoadEntities: true, // Carrega entidades sem precisar especificá-las
       synchronize: true, // Configuração de sincronização automática (não recomendado em produção)
-      migrations: [__dirname + '/../migrations/*.{js,ts}'],
+      migrations: [__dirname + "/../migrations/*.{js,ts}"],
     }),
     ResidentsModule,
     NoticesModule,
-  ], // Importa o módulo de moradores
+  ], // Importa os módulos de moradores e avisos
   providers: [
     {
       // O `APP_INTERCEPTOR` é um token especial do NestJS que permite registrar interceptores globalmente.
