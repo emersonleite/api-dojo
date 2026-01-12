@@ -11,7 +11,7 @@ import {
 
 @Entity()
 export class Resident {
-  @PrimaryGeneratedColumn("uuid")
+  @PrimaryGeneratedColumn("uuid") // id de tipo UUID
   id: string;
 
   @Column({ type: "varchar", length: 50 })
@@ -33,14 +33,22 @@ export class Resident {
   @Column({ type: "varchar" })
   phone: string;
 
+  // Define automaticamente a data de criação da entidade quando inserida no banco
   @CreateDateColumn()
   createdAt?: Date;
 
+  // Define automaticamente a data de atualização da entidade sempre que modificada no banco
   @UpdateDateColumn()
   updatedAt?: Date;
 
-  // Relacionamento de um residente para muitos avisos, pois
-  // um residente pode criar vários avisos
+  @Column({ type: "boolean", default: false })
+  active: boolean;
+
+  // Relacionamento de um morador para muitos avisos, pois um morador pode criar vários avisos
+  // OneToMany define o lado "um" da relação (1:N)
+  // Primeiro parâmetro: entidade relacionada (Notice)
+  // Segundo parâmetro: propriedade inversa que aponta de volta para esta entidade (notice.createdBy)
+  // Este lado não cria coluna no banco, apenas permite acessar os avisos do morador
   @OneToMany(() => Notice, (notice) => notice.createdBy)
   notices: Notice[];
 }
