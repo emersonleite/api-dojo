@@ -1,30 +1,34 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateNoticeDto } from './dto/create-notice.dto';
-import { UpdateNoticeDto } from './dto/update-notice.dto';
-import { Repository } from 'typeorm';
-import { Notice } from './entities/notice.entity';
-import { InjectRepository } from '@nestjs/typeorm';
-import { ResidentsService } from 'src/residents/residents.service';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
+import { CreateNoticeDto } from "./dto/create-notice.dto";
+import { UpdateNoticeDto } from "./dto/update-notice.dto";
+import { Repository } from "typeorm";
+import { Notice } from "./entities/notice.entity";
+import { InjectRepository } from "@nestjs/typeorm";
+import { ResidentsService } from "src/residents/residents.service";
 
 @Injectable()
 export class NoticesService {
   constructor(
     @InjectRepository(Notice) // Injetando o repositório a partir de Notice (entidade)
     private readonly noticeRepository: Repository<Notice>,
-    private readonly residentsService: ResidentsService,
+    private readonly residentsService: ResidentsService
   ) {}
 
   async findAll(): Promise<Notice[]> {
     return await this.noticeRepository.find({
-      relations: ['createdBy'], // Relacionando createdBy para o retorno da query
-      select: { createdBy: { id: true, name: true } }, // Selecionando apenas os campos id e name de createdBy
+      relations: ["createdBy"], // Carrega os dados da entidade relacionada (JOIN automático), sem isso viria apenas o ID
+      select: { createdBy: { id: true, name: true } }, // Filtra quais campos da relação retornar, evitando trazer dados desnecessários (ex: password, phone)
     });
   }
 
   async findOne(id: string): Promise<Notice> {
     const notice = await this.noticeRepository.findOne({
       where: { id },
-      relations: ['createdBy'],
+      relations: ["createdBy"],
       select: { createdBy: { id: true, name: true } },
     });
     if (!notice) {
@@ -47,12 +51,14 @@ export class NoticesService {
   }
 
   async update(id: string, updateResidentDto: UpdateNoticeDto) {
+    // Impede a modificação do criador do aviso
+    /* if ("createdBy" in updateResidentDto) {
+      throw new BadRequestException("createdBy cannot be updated");
+    } */
+
     const notice = await this.noticeRepository.preload({
       id,
       ...updateResidentDto,
-      createdBy: updateResidentDto.createdBy
-        ? { id: updateResidentDto.createdBy }
-        : undefined,
     });
 
     if (!notice) {
