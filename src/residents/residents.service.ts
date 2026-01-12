@@ -82,6 +82,7 @@ export class ResidentsService {
       // Lança BadRequestException para impedir atualização do email
       throw new BadRequestException("Email cannot be updated");
     }
+    // TODO - verificar se é melhor retirar o email do DTO com OmitType
 
     // preload: Busca a entidade pelo ID, mescla os novos valores do DTO nos campos existentes
     // e retorna a entidade atualizada (mas ainda não salva no banco).
