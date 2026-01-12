@@ -32,9 +32,10 @@ export class Notice {
   createdAt?: Date;
 
   //Criar relacionamento com Resident
-  // Relação de muitos para um, pois um residente pode criar vários avisos
-  @ManyToOne(() => Resident, { onDelete: "CASCADE" })
-  @JoinColumn({ name: "createdBy" })
+  // Relação de muitos para um, pois um morador pode criar vários avisos
+  // Muitos avisos podem estar relacionados a uma pessoa
+  @ManyToOne(() => Resident, { onDelete: "CASCADE" }) // onDelete: "CASCADE" - Se o morador (Resident) for deletado, todos os avisos criados por ele também serão deletados automaticamente
+  @JoinColumn({ name: "createdBy" }) // JoinColumn especifica qual coluna armazena a chave estrangeira (FK)
   createdBy: Resident;
 
   @UpdateDateColumn()
