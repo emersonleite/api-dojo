@@ -15,8 +15,8 @@ import { AppService } from "./app.service";
   imports: [
     TypeOrmModule.forRoot({
       type: "sqlite",
-      database: "database/db.sqlite",
-      autoLoadEntities: true, // Carrega entidades sem precisar especificá-las
+      database: "database/db.sqlite", // Caminho do banco de dados usado em runtime pela aplicação (deve coincidir com data-source.ts para consistência)
+      autoLoadEntities: true, // Carrega automaticamente todas as entidades decoradas com @Entity() no projeto, evitando listá-las manualmente
       synchronize: true, // Configuração de sincronização automática (não recomendado em produção)
       migrations: [__dirname + "/../migrations/*.{js,ts}"],
     }),
