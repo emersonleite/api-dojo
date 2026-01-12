@@ -36,20 +36,21 @@ export class ResidentsService {
   }
 
   async create(residentDto: CreateResidentDto): Promise<Resident> {
+    const { email } = residentDto;
     const isThereUserEmail = await this.residentRepository.findOne({
-      where: { email: residentDto.email },
+      where: { email },
     });
 
     if (isThereUserEmail) {
       // Lança ConflictException para indicar conflito de dados (email duplicado)
       throw new ConflictException(
-        `Resident with email ${residentDto.email} already exists.`
+        `Resident with email ${email} already exists.`
       );
     }
 
     const resident = this.residentRepository.create({
       ...residentDto,
-      passwordHash: residentDto.password,
+      passwordHash: residentDto.password, // TODO: Implementar hashing de senha para segurança (ex.: usar bcrypt); atualmente armazena em texto plano
     });
     return this.residentRepository.save(resident);
   }
@@ -82,6 +83,9 @@ export class ResidentsService {
       throw new BadRequestException("Email cannot be updated");
     }
 
+    // preload: Busca a entidade pelo ID, mescla os novos valores do DTO nos campos existentes
+    // e retorna a entidade atualizada (mas ainda não salva no banco).
+    // Se o ID não existir, retorna undefined. Útil para updates parciais pois preserva campos não enviados.
     const resident = await this.residentRepository.preload({
       id,
       ...updateResidentDto,
