@@ -1,7 +1,7 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreateResidentDto } from './dto/create-resident.dto';
-import { UpdateResidentDto } from './dto/update-resident.dto';
-import { Resident } from './entities/resident.entity';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { CreateResidentDto } from "./dto/create-resident.dto";
+import { UpdateResidentDto } from "./dto/update-resident.dto";
+import { Resident } from "./entities/resident.entity";
 
 /**
  * O serviço (ResidentsService) é responsável por gerenciar os dados
@@ -44,6 +44,7 @@ export class ResidentsService {
       ...residentDto,
       id: this.generateUuid(),
       passwordHash: residentDto.password,
+      active: true,
       notices: [],
     };
     this.residents.push(newResident);
