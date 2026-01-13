@@ -6,12 +6,14 @@ import {
   Patch,
   Param,
   Delete,
-} from '@nestjs/common';
-import { NoticesService } from './notices.service';
-import { CreateNoticeDto } from './dto/create-notice.dto';
-import { UpdateNoticeDto } from './dto/update-notice.dto';
+  Query,
+} from "@nestjs/common";
+import { NoticesService } from "./notices.service";
+import { CreateNoticeDto } from "./dto/create-notice.dto";
+import { UpdateNoticeDto } from "./dto/update-notice.dto";
+import { PaginationDto } from "src/shared/pagination.dto";
 
-@Controller('notices')
+@Controller("notices")
 export class NoticesController {
   constructor(private readonly noticesService: NoticesService) {}
 
@@ -21,22 +23,22 @@ export class NoticesController {
   }
 
   @Get()
-  findAll() {
-    return this.noticesService.findAll();
+  findAll(@Query() pagination?: PaginationDto) {
+    return this.noticesService.findAll(pagination);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
+  @Get(":id")
+  findOne(@Param("id") id: string) {
     return this.noticesService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateNoticeDto: UpdateNoticeDto) {
+  @Patch(":id")
+  update(@Param("id") id: string, @Body() updateNoticeDto: UpdateNoticeDto) {
     return this.noticesService.update(id, updateNoticeDto);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
+  @Delete(":id")
+  remove(@Param("id") id: string) {
     return this.noticesService.delete(id);
   }
 }
