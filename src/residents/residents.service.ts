@@ -9,6 +9,7 @@ import { UpdateResidentDto } from "./dto/update-resident.dto";
 import { Resident } from "./entities/resident.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { PaginationDto } from "src/shared/pagination.dto";
 
 @Injectable()
 export class ResidentsService {
@@ -19,8 +20,17 @@ export class ResidentsService {
 
   // relations: ["notices"] faz o carregamento eager (ansioso) dos avisos relacionados a cada morador,
   // evitando o problema N+1 queries e incluindo os dados completos na resposta de uma vez
-  async findAll(): Promise<Resident[]> {
-    return await this.residentRepository.find({ relations: ["notices"] });
+  async findAll(pagination?: PaginationDto): Promise<Resident[]> {
+    const { limit: take = 10, page = 1 } = pagination;
+
+    return await this.residentRepository.find({
+      relations: ["notices"],
+      take,
+      skip: (page - 1) * take,
+      order: {
+        createdAt: "ASC",
+      },
+    });
   }
 
   async findOne(id: string): Promise<Resident> {
@@ -78,11 +88,11 @@ export class ResidentsService {
 
   async update(id: string, updateResidentDto: UpdateResidentDto) {
     /* Evitando que o email possa ser atualizado mesmo que esteja presente no DTO */
+    // TODO - verificar se é melhor retirar o email do DTO com OmitType
     if ("email" in updateResidentDto) {
       // Lança BadRequestException para impedir atualização do email
       throw new BadRequestException("Email cannot be updated");
     }
-    // TODO - verificar se é melhor retirar o email do DTO com OmitType
 
     // preload: Busca a entidade pelo ID, mescla os novos valores do DTO nos campos existentes
     // e retorna a entidade atualizada (mas ainda não salva no banco).
