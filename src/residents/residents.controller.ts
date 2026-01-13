@@ -13,6 +13,7 @@ import {
 import { ResidentsService } from "./residents.service";
 import { CreateResidentDto } from "./dto/create-resident.dto";
 import { UpdateResidentDto } from "./dto/update-resident.dto";
+import { PaginationDto } from "src/shared/pagination.dto";
 
 /*
  * Exemplos de pipes do NestJS que podem ser usados em parâmetros ou corpo de requisições:
@@ -38,8 +39,8 @@ export class ResidentsController {
    * @returns Lista de moradores.
    */
   @Get()
-  findAll(@Query("filter") filter?: string) {
-    return this.residentsService.findAll();
+  findAll(@Query() pagination?: PaginationDto) {
+    return this.residentsService.findAll(pagination);
   }
 
   /**
