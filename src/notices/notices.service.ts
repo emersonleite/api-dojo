@@ -1,14 +1,11 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { CreateNoticeDto } from "./dto/create-notice.dto";
 import { UpdateNoticeDto } from "./dto/update-notice.dto";
 import { Repository } from "typeorm";
 import { Notice } from "./entities/notice.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ResidentsService } from "src/residents/residents.service";
+import { PaginationDto } from "src/shared/pagination.dto";
 
 @Injectable()
 export class NoticesService {
@@ -18,10 +15,17 @@ export class NoticesService {
     private readonly residentsService: ResidentsService
   ) {}
 
-  async findAll(): Promise<Notice[]> {
+  async findAll(pagination?: PaginationDto): Promise<Notice[]> {
+    const { limit: take = 10, page = 1 } = pagination;
+
     return await this.noticeRepository.find({
       relations: ["createdBy"], // Carrega os dados da entidade relacionada (JOIN automático), sem isso viria apenas o ID
       select: { createdBy: { id: true, name: true } }, // Filtra quais campos da relação retornar, evitando trazer dados desnecessários (ex: password, phone)
+      take,
+      skip: (page - 1) * take,
+      order: {
+        createdAt: "ASC",
+      },
     });
   }
 
