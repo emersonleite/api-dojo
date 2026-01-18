@@ -1,6 +1,7 @@
 import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app/app.module";
+import { ParseUuidIdPipe } from "./shared/pipes/parse-uuid-id.pipe";
 
 // Função principal para inicializar a aplicação NestJS
 async function bootstrap() {
@@ -13,7 +14,8 @@ async function bootstrap() {
       whitelist: true, // Remove propriedades não declaradas nos DTOs, evitando dados extras
       forbidNonWhitelisted: true, // Retorna erro se propriedades desconhecidas forem enviadas, garantindo segurança
       transform: true, // Converte automaticamente os tipos de dados conforme os DTOs
-    })
+    }),
+    new ParseUuidIdPipe(),
   );
 
   // Inicia o servidor na porta 3000
