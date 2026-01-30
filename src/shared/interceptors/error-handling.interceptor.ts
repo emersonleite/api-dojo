@@ -2,6 +2,7 @@ import {
   BadRequestException,
   CallHandler,
   ExecutionContext,
+  Injectable,
   NestInterceptor,
 } from "@nestjs/common";
 import { catchError, Observable, throwError } from "rxjs";
@@ -19,6 +20,7 @@ import { catchError, Observable, throwError } from "rxjs";
  * Observação: Este interceptor usa RxJS operators (pipe, catchError) para
  * interceptar o fluxo de dados de forma reativa.
  */
+@Injectable()
 export class ErrorHandlingInterceptor implements NestInterceptor {
   intercept(
     _context: ExecutionContext,

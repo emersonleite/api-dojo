@@ -1,4 +1,9 @@
-import { CallHandler, ExecutionContext, NestInterceptor } from "@nestjs/common";
+import {
+  CallHandler,
+  ExecutionContext,
+  Injectable,
+  NestInterceptor,
+} from "@nestjs/common";
 import { Observable } from "rxjs";
 
 /**
@@ -13,6 +18,7 @@ import { Observable } from "rxjs";
  * - No controller (@UseInterceptors no nível da classe)
  * - Em rotas específicas (@UseInterceptors no método)
  */
+@Injectable()
 export class AddHeaderInterceptor implements NestInterceptor {
   intercept(
     context: ExecutionContext,

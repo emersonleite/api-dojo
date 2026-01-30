@@ -1,4 +1,9 @@
-import { CallHandler, ExecutionContext, NestInterceptor } from "@nestjs/common";
+import {
+  CallHandler,
+  ExecutionContext,
+  Injectable,
+  NestInterceptor,
+} from "@nestjs/common";
 import { Observable, tap } from "rxjs";
 
 /**
@@ -14,6 +19,7 @@ import { Observable, tap } from "rxjs";
  * O operador RxJS `tap` permite executar efeitos colaterais (como logs)
  * sem modificar o fluxo de dados da resposta.
  */
+@Injectable()
 export class TimingConectionInterceptor implements NestInterceptor {
   intercept(
     _context: ExecutionContext,
