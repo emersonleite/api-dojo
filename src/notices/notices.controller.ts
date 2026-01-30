@@ -7,11 +7,13 @@ import {
   Param,
   Delete,
   Query,
+  UseInterceptors,
 } from "@nestjs/common";
 import { NoticesService } from "./notices.service";
 import { CreateNoticeDto } from "./dto/create-notice.dto";
 import { UpdateNoticeDto } from "./dto/update-notice.dto";
 import { PaginationDto } from "src/shared/pagination.dto";
+import { TimingConectionInterceptor } from "src/shared/interceptors/timing-conection.interceptor";
 
 @Controller("notices")
 export class NoticesController {
@@ -23,6 +25,7 @@ export class NoticesController {
   }
 
   @Get()
+  @UseInterceptors(TimingConectionInterceptor) // Aplica o interceptor apenas nesta rota específica para medir o tempo de execução
   findAll(@Query() pagination?: PaginationDto) {
     return this.noticesService.findAll(pagination);
   }
