@@ -8,12 +8,14 @@ import {
   Delete,
   HttpCode,
   Query,
-  ParseUUIDPipe, // Pipe do NestJS que valida se o parâmetro é um UUID válido; lança BadRequestException se inválido
+  ParseUUIDPipe,
+  UseInterceptors, // Pipe do NestJS que valida se o parâmetro é um UUID válido; lança BadRequestException se inválido
 } from "@nestjs/common";
 import { ResidentsService } from "./residents.service";
 import { CreateResidentDto } from "./dto/create-resident.dto";
 import { UpdateResidentDto } from "./dto/update-resident.dto";
 import { PaginationDto } from "src/shared/pagination.dto";
+import { AddHeaderInterceptor } from "src/shared/interceptors/add-header.interceptor";
 
 /*
  * Exemplos de pipes do NestJS que podem ser usados em parâmetros ou corpo de requisições:
@@ -30,6 +32,7 @@ import { PaginationDto } from "src/shared/pagination.dto";
  * relacionadas aos moradores e delega a lógica para o serviço (ResidentsService).
  */
 @Controller("residents")
+@UseInterceptors(AddHeaderInterceptor) // Aplica o interceptor em TODAS as rotas deste controller (nível de classe)
 export class ResidentsController {
   constructor(private readonly residentsService: ResidentsService) {}
 
@@ -39,6 +42,7 @@ export class ResidentsController {
    * @returns Lista de moradores.
    */
   @Get()
+  // @UseInterceptors(AddHeaderInterceptor) // Também é possível aplicar interceptors em rotas individuais (sobrescreve o do controller)
   findAll(@Query() pagination?: PaginationDto) {
     return this.residentsService.findAll(pagination);
   }
@@ -72,7 +76,7 @@ export class ResidentsController {
   @Patch(":id")
   update(
     @Param("id", ParseUUIDPipe) id: string,
-    @Body() updateResidentDto: UpdateResidentDto
+    @Body() updateResidentDto: UpdateResidentDto,
   ) {
     return this.residentsService.update(id, updateResidentDto);
   }
