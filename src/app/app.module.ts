@@ -25,14 +25,19 @@ import { AppService } from "./app.service";
   ], // Importa os módulos de moradores e avisos
   providers: [
     {
-      // O `APP_INTERCEPTOR` é um token especial do NestJS que permite registrar interceptores globalmente.
-      // Isso significa que o interceptor configurado aqui será aplicado a todas as rotas do aplicativo,
-      // sem a necessidade de registrá-lo manualmente em cada controller ou handler.
+      // APP_INTERCEPTOR: Token especial do NestJS para registro de interceptors globais via Dependency Injection.
+      // Vantagens sobre app.useGlobalInterceptors():
+      // 1. Permite injeção de dependências no interceptor
+      // 2. Integração completa com o sistema de módulos do NestJS
+      // 3. Pode ser sobrescrito em módulos específicos
       provide: APP_INTERCEPTOR,
-      // O `ClassSerializerInterceptor` é um interceptor embutido do NestJS que utiliza o pacote `class-transformer`.
-      // Ele é usado para transformar e serializar objetos retornados pelas rotas antes de enviá-los como resposta HTTP.
-      // Um uso típico é excluir ou formatar campos em entidades, como ocultar a senha do usuário,
-      // utilizando decoradores como `@Exclude` ou `@Transform` nas entidades ou DTOs.
+
+      // ClassSerializerInterceptor: Interceptor nativo que serializa entidades antes de retorná-las ao cliente.
+      // Usa decorators do class-transformer para controlar a serialização:
+      // - @Exclude(): Remove campos da resposta (ex: senhas, tokens)
+      // - @Expose(): Expõe apenas campos específicos
+      // - @Transform(): Transforma valores antes de enviar
+      // Exemplo: @Exclude() password: string; // Este campo nunca será retornado na API
       useClass: ClassSerializerInterceptor,
     },
     AppService,
