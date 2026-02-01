@@ -24,7 +24,7 @@ export class AddHeaderInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler<any>,
   ): Observable<any> | Promise<Observable<any>> {
-    console.log("AddHeaderInterceptor");
+    console.log("Esse console é do AddHeaderInterceptor");
 
     // Obtém o objeto de resposta HTTP do contexto de execução
     const response = context.switchToHttp().getResponse();
