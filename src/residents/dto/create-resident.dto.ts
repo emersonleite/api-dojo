@@ -7,11 +7,13 @@ import {
   IsPhoneNumber,
   IsBoolean,
   IsOptional,
+  IsEnum,
 } from "class-validator";
 // <--- Valor possível para expressões regulares:
 /* Matches */
 
 import { Transform } from "class-transformer";
+import { Role } from "../../shared/enums";
 
 /**
  * A classe `CreateResidentDto` é usada para transferir os dados necessários para
@@ -58,4 +60,7 @@ export class CreateResidentDto {
   @IsBoolean({ message: "Active must be a boolean." })
   @IsOptional()
   active: boolean;
+
+  @IsEnum(Role, { message: "Role must be a valid role (ADMIN or COMMON)" })
+  role: Role;
 }
