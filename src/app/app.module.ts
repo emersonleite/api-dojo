@@ -7,12 +7,13 @@ import {
 import { ResidentsModule } from "../residents/residents.module";
 import { NoticesModule } from "../notices/notices.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { APP_FILTER, APP_INTERCEPTOR } from "@nestjs/core";
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
 import { ClassSerializerInterceptor } from "@nestjs/common";
 import { AppService } from "./app.service";
 import { SimpleMiddleware } from "src/shared/middlewares/simple.middleware";
 import { OtherMiddleware } from "src/shared/middlewares/other.middleware";
 import { NotFoundExceptionError } from "src/shared/filters/not-found.filter";
+import { IsFromAgent } from "src/shared/guards/is-from-agent-api-dog.guard";
 
 /**
  * O módulo principal da aplicação (AppModule).
@@ -25,7 +26,11 @@ import { NotFoundExceptionError } from "src/shared/filters/not-found.filter";
       type: "sqlite",
       database: "database/db.sqlite", // Caminho do banco de dados usado em runtime pela aplicação (deve coincidir com data-source.ts para consistência)
       autoLoadEntities: true, // Carrega automaticamente todas as entidades decoradas com @Entity() no projeto, evitando listá-las manualmente
-      synchronize: true, // Configuração de sincronização automática (não recomendado em produção)
+      synchronize: true,
+      // synchronize: Atualiza automaticamente o schema do banco ao iniciar a aplicação com base nas entidades
+      // DESENVOLVIMENTO: true - Facilita prototipagem rápida sem precisar criar migrations
+      // PRODUÇÃO: false - Pode causar perda de dados, remover colunas ou alterar tipos inesperadamente
+      // Para produção, sempre use migrations (npm run migration:generate e npm run migration:run)
       migrations: [__dirname + "/../migrations/*.{js,ts}"],
     }),
     ResidentsModule,
@@ -49,6 +54,14 @@ import { NotFoundExceptionError } from "src/shared/filters/not-found.filter";
       useClass: ClassSerializerInterceptor,
     },
     { provide: APP_FILTER, useClass: NotFoundExceptionError },
+    {
+      // APP_GUARD: Token para registro de guards globais via Dependency Injection.
+      // Guards globais são executados em TODAS as rotas antes dos handlers.
+      // IsFromAgent: Verifica se a requisição vem de um user-agent específico (API Dog ou similar)
+      // Para desabilitar em rotas específicas, use metadata customizado com @SetMetadata()
+      provide: APP_GUARD,
+      useClass: IsFromAgent,
+    },
     AppService,
   ],
 })
