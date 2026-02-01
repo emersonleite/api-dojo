@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { Role } from "../../shared/enums";
 
 @Entity()
 export class Resident {
@@ -43,6 +44,9 @@ export class Resident {
 
   @Column({ type: "boolean", default: false })
   active: boolean;
+
+  @Column({ type: "varchar", default: Role.COMMON })
+  role: Role;
 
   // Relacionamento de um morador para muitos avisos, pois um morador pode criar vários avisos
   // OneToMany define o lado "um" da relação (1:N)
