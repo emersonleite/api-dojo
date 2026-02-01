@@ -1,10 +1,18 @@
-import { Module } from "@nestjs/common";
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from "@nestjs/common";
 import { ResidentsModule } from "../residents/residents.module";
 import { NoticesModule } from "../notices/notices.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { APP_INTERCEPTOR } from "@nestjs/core";
+import { APP_FILTER, APP_INTERCEPTOR } from "@nestjs/core";
 import { ClassSerializerInterceptor } from "@nestjs/common";
 import { AppService } from "./app.service";
+import { SimpleMiddleware } from "src/shared/middlewares/simple.middleware";
+import { OtherMiddleware } from "src/shared/middlewares/other.middleware";
+import { NotFoundExceptionError } from "src/shared/filters/not-found.filter";
 
 /**
  * O módulo principal da aplicação (AppModule).
@@ -40,7 +48,16 @@ import { AppService } from "./app.service";
       // Exemplo: @Exclude() password: string; // Este campo nunca será retornado na API
       useClass: ClassSerializerInterceptor,
     },
+    { provide: APP_FILTER, useClass: NotFoundExceptionError },
     AppService,
   ],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  /* Aplicando os middlewares. A ordem em apply determina a ordem de execução */
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(SimpleMiddleware, OtherMiddleware).forRoutes({
+      path: "residents",
+      method: RequestMethod.ALL,
+    });
+  }
+}
