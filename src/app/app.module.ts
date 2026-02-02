@@ -68,7 +68,11 @@ import { IsFromAgent } from "src/shared/guards/is-from-agent-api-dog.guard";
   ],
 })
 export class AppModule implements NestModule {
-  /* Aplicando os middlewares. A ordem em apply determina a ordem de execução */
+  /**
+   * Configura middlewares para rotas específicas.
+   * IMPORTANTE: A ordem dos middlewares em apply() define a ordem de execução na cadeia de requisições.
+   * Primeiro executa SimpleMiddleware, depois OtherMiddleware, antes de chegar no controller.
+   */
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(SimpleMiddleware, OtherMiddleware).forRoutes({
       path: "residents",
