@@ -24,8 +24,10 @@ import { IsFromAgent } from "src/shared/guards/is-from-agent-api-dog.guard";
   imports: [
     TypeOrmModule.forRoot({
       type: "sqlite",
-      database: "database/db.sqlite", // Caminho do banco de dados usado em runtime pela aplicação (deve coincidir com data-source.ts para consistência)
-      autoLoadEntities: true, // Carrega automaticamente todas as entidades decoradas com @Entity() no projeto, evitando listá-las manualmente
+      database: "database/db.sqlite",
+      // Caminho do banco de dados usado em runtime pela aplicação (deve coincidir com data-source.ts para consistência)
+      autoLoadEntities: true,
+      // Carrega automaticamente todas as entidades decoradas com @Entity() no projeto, evitando listá-las manualmente
       synchronize: true,
       // synchronize: Atualiza automaticamente o schema do banco ao iniciar a aplicação com base nas entidades
       // DESENVOLVIMENTO: true - Facilita prototipagem rápida sem precisar criar migrations
