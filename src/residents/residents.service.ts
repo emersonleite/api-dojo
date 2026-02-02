@@ -15,7 +15,7 @@ import { PaginationDto } from "src/shared/pagination.dto";
 export class ResidentsService {
   constructor(
     @InjectRepository(Resident) // Injetando o repositório a partir de Resident (entidade)
-    private readonly residentRepository: Repository<Resident>
+    private readonly residentRepository: Repository<Resident>,
   ) {}
 
   // relations: ["notices"] faz o carregamento eager (ansioso) dos avisos relacionados a cada morador,
@@ -54,7 +54,7 @@ export class ResidentsService {
     if (isThereUserEmail) {
       // Lança ConflictException para indicar conflito de dados (email duplicado)
       throw new ConflictException(
-        `Resident with email ${email} already exists.`
+        `Resident with email ${email} already exists.`,
       );
     }
 
@@ -79,7 +79,7 @@ export class ResidentsService {
       if (error.driverError.errno === 19) {
         // Lança ConflictException se o erro for de unicidade (email duplicado)
         throw new ConflictException(
-          `Resident with email ${residentDto.email} already exists.`
+          `Resident with email ${residentDto.email} already exists.`,
         );
       }
       throw error;
