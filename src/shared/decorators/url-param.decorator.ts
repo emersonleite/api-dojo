@@ -7,6 +7,8 @@ export const UrlParam = createParamDecorator(
 
     const request: Request = context.getRequest();
 
-    return request.url;
+    const { url } = request;
+
+    return url;
   },
 );
