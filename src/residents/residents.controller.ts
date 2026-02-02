@@ -16,6 +16,7 @@ import { CreateResidentDto } from "./dto/create-resident.dto";
 import { UpdateResidentDto } from "./dto/update-resident.dto";
 import { PaginationDto } from "src/shared/pagination.dto";
 import { AddHeaderInterceptor } from "src/shared/interceptors/add-header.interceptor";
+import { UrlParam } from "src/shared/decorators/url-param.decorator";
 
 /*
  * Exemplos de pipes do NestJS que podem ser usados em parâmetros ou corpo de requisições:
@@ -43,7 +44,8 @@ export class ResidentsController {
    */
   @Get()
   // @UseInterceptors(AddHeaderInterceptor) // Também é possível aplicar interceptors em rotas individuais (sobrescreve o do controller)
-  findAll(@Query() pagination?: PaginationDto) {
+  findAll(@Query() pagination: PaginationDto, @UrlParam() url: string) {
+    console.log("url do decorator: " + url);
     return this.residentsService.findAll(pagination);
   }
 
