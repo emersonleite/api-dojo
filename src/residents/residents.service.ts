@@ -10,12 +10,14 @@ import { Resident } from "./entities/resident.entity";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { PaginationDto } from "src/shared/pagination.dto";
+import { UtilsService } from "src/utils/utils.service";
 
 @Injectable()
 export class ResidentsService {
   constructor(
     @InjectRepository(Resident) // Injetando o repositório a partir de Resident (entidade)
     private readonly residentRepository: Repository<Resident>,
+    private readonly utilsService: UtilsService, // Injetando serviço de utilitários global
   ) {}
 
   // relations: ["notices"] faz o carregamento eager (ansioso) dos avisos relacionados a cada morador,
@@ -47,6 +49,14 @@ export class ResidentsService {
 
   async create(residentDto: CreateResidentDto): Promise<Resident> {
     const { email } = residentDto;
+
+    // Exemplo de uso do UtilsService: formata data atual e remove acentos do nome
+    console.log("Data de criação:", this.utilsService.formatDate(new Date()));
+    console.log(
+      "Nome sem acentos:",
+      this.utilsService.removeAccents(residentDto.name),
+    );
+
     const isThereUserEmail = await this.residentRepository.findOne({
       where: { email },
     });
