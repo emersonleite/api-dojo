@@ -6,6 +6,7 @@ import {
 } from "@nestjs/common";
 import { ResidentsModule } from "../residents/residents.module";
 import { NoticesModule } from "../notices/notices.module";
+import { UtilsModule } from "../utils/utils.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from "@nestjs/core";
 import { ClassSerializerInterceptor } from "@nestjs/common";
@@ -35,6 +36,7 @@ import { IsFromAgent } from "src/shared/guards/is-from-agent-api-dog.guard";
       // Para produção, sempre use migrations (npm run migration:generate e npm run migration:run)
       migrations: [__dirname + "/../migrations/*.{js,ts}"],
     }),
+    UtilsModule,
     ResidentsModule,
     NoticesModule,
   ], // Importa os módulos de moradores e avisos
