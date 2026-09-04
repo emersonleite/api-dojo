@@ -1,0 +1,51 @@
+@baseUrl = http://localhost:3000
+
+# Notices
+# @name Create
+POST {{baseUrl}}/notices HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Alerta",
+  "description": "Esse é um alerta grave",
+  "priority": "Alta",
+  "status": "Ativo",
+  "createdBy":"a1b7beb5-026c-45df-91c0-4d68709c058f"
+}
+
+###
+# @name GetAll
+GET {{baseUrl}}/notices HTTP/1.1
+Content-Type: application/json
+
+###
+# @name GetOne
+GET {{baseUrl}}/notices/a618da11-88d0-44db-b2bd-28397e194c07 HTTP/1.1
+Content-Type: application/json
+
+###
+# @name Update
+PATCH {{baseUrl}}/notices/0dd9e731-b087-407f-8fc9-e957154e5ee1 HTTP/1.1
+Content-Type: application/json
+
+{
+  "title": "Alerta modificado",
+  "description": "Esse é um alerta grave",
+  "priority": "Alta",
+  "status": "Ativo",
+}
+
+###
+# @name Delete
+DELETE  {{baseUrl}}/notices/a93e73c0-693d-417c-9936-b7e7b2e82a8d HTTP/1.1
+Content-Type: application/json
+
+
+
+
+
+
+
+
+
+

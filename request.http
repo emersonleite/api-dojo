@@ -1,0 +1,177 @@
+### Variáveis
+@baseUrl = http://localhost:3000
+@residentId = {{createResident.response.body.id}}
+@noticeId = {{createNotice.response.body.id}}
+
+###############################################
+# RESIDENTS
+###############################################
+
+### Criar um novo morador (ADMIN)
+# @name createResident
+POST {{baseUrl}}/residents
+Content-Type: application/json
+
+{
+  "name": "João Silva",
+  "email": "joao.silva@email.com",
+  "apartment": "101",
+  "building": "A",
+  "phone": "+5511987654321",
+  "password": "SenhaForte@123456",
+  "active": true,
+  "role": "ADMIN"
+}
+
+### Criar um morador comum
+POST {{baseUrl}}/residents
+Content-Type: application/json
+
+{
+  "name": "Maria Santos",
+  "email": "maria.santos@email.com",
+  "apartment": "202",
+  "building": "B",
+  "phone": "+5511912345678",
+  "password": "OutraSenha@78901",
+  "active": true,
+  "role": "COMMON"
+}
+
+### Listar todos os moradores (sem paginação)
+GET {{baseUrl}}/residents
+
+### Listar moradores com paginação
+GET {{baseUrl}}/residents?page=1&limit=10
+
+### Buscar morador por ID
+GET {{baseUrl}}/residents/{{residentId}}
+
+### Atualizar morador parcialmente
+PATCH {{baseUrl}}/residents/{{residentId}}
+Content-Type: application/json
+
+{
+  "name": "João Silva Atualizado",
+  "phone": "+5511999999999"
+}
+
+### Deletar morador por ID
+DELETE {{baseUrl}}/residents/{{residentId}}
+
+### Deletar todos os moradores (cuidado!)
+DELETE {{baseUrl}}/residents
+
+###############################################
+# NOTICES (AVISOS)
+###############################################
+
+### Criar um novo aviso
+# @name createNotice
+POST {{baseUrl}}/notices
+Content-Type: application/json
+
+{
+  "title": "Manutenção da Piscina",
+  "description": "A piscina estará fechada para manutenção no próximo sábado das 8h às 17h.",
+  "priority": "ALTA",
+  "status": "ATIVO",
+  "createdBy": "{{residentId}}"
+}
+
+### Criar outro aviso
+POST {{baseUrl}}/notices
+Content-Type: application/json
+
+{
+  "title": "Reunião de Condomínio",
+  "description": "Reunião extraordinária na próxima sexta-feira às 19h no salão de festas.",
+  "priority": "MÉDIA",
+  "status": "ATIVO",
+  "createdBy": "{{residentId}}"
+}
+
+### Listar todos os avisos (sem paginação)
+GET {{baseUrl}}/notices
+
+### Listar avisos com paginação
+GET {{baseUrl}}/notices?page=1&limit=5
+
+### Buscar aviso por ID
+GET {{baseUrl}}/notices/{{noticeId}}
+
+### Atualizar aviso parcialmente
+PATCH {{baseUrl}}/notices/{{noticeId}}
+Content-Type: application/json
+
+{
+  "status": "ARQUIVADO",
+  "priority": "BAIXA"
+}
+
+### Deletar aviso por ID
+DELETE {{baseUrl}}/notices/{{noticeId}}
+
+###############################################
+# TESTES DE VALIDAÇÃO
+###############################################
+
+### Teste: Criar morador com senha fraca (deve falhar)
+POST {{baseUrl}}/residents
+Content-Type: application/json
+
+{
+  "name": "Teste Validação",
+  "email": "teste@email.com",
+  "apartment": "303",
+  "building": "C",
+  "phone": "+5511987654321",
+  "password": "123",
+  "active": true,
+  "role": "COMMON"
+}
+
+### Teste: Criar morador com email inválido (deve falhar)
+POST {{baseUrl}}/residents
+Content-Type: application/json
+
+{
+  "name": "Teste Email",
+  "email": "email-invalido",
+  "apartment": "404",
+  "building": "D",
+  "phone": "+5511987654321",
+  "password": "SenhaForte@123456",
+  "active": true,
+  "role": "COMMON"
+}
+
+### Teste: Criar aviso com UUID inválido (deve falhar)
+POST {{baseUrl}}/notices
+Content-Type: application/json
+
+{
+  "title": "Teste UUID",
+  "description": "Testando validação de UUID",
+  "priority": "BAIXA",
+  "status": "ATIVO",
+  "createdBy": "id-invalido"
+}
+
+### Teste: Buscar morador com ID inválido (deve falhar)
+GET {{baseUrl}}/residents/id-invalido
+
+### Teste: Criar morador com role inválido (deve falhar)
+POST {{baseUrl}}/residents
+Content-Type: application/json
+
+{
+  "name": "Teste Role",
+  "email": "teste.role@email.com",
+  "apartment": "505",
+  "building": "E",
+  "phone": "+5511987654321",
+  "password": "SenhaForte@123456",
+  "active": true,
+  "role": "SUPER_ADMIN"
+}
